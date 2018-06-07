@@ -1,4 +1,7 @@
 # Anomalous diffusion coefficients function
+# 100th power sinusoidal function as initial condition and no source.
+# No advection, bi-blux (primary and secondary diffusion) and with beta variation.
+#
 # Beta function
 fbeta<-function(p)
 {betamin<-0.2
@@ -23,6 +26,11 @@ return(f)}
 
 # velocity
 v<-0
+
+# Source function
+fs<-function(x,t)
+{ f<-0
+ return(f)}
 
 # diffusion coefficients parameter
 k2<-1e-3
@@ -63,13 +71,13 @@ fe2<-function(t)
  return(f)}
 #
 parm=c(k2,k4,v,l,m,tf,n,w10,w11,w12,w20,w21,w22,e10,e11,e12,e20,e21,e22)
-func=c(fbeta=fbeta,dbetadp=dbetadp,fn=fn,fw1=fw1,fw2=fw2,fe1=fe1,fe2=fe2)
+func=c(fbeta=fbeta,dbetadp=dbetadp,fn=fn,fs=fs,fw1=fw1,fw2=fw2,fe1=fe1,fe2=fe2)
 #
 ad<-AdvDif4(parm,func)
 eixo<-seq(0,1,by=0.01)
 plot(eixo,ad[1,1:101],type='l',col="red",xaxt="n",xlab="X", ylab="p(x,t)")
 axis(1,seq(0,1,0.1),las=2)
-lines(eixo,ad[250,1:101],type='l',col="green")
+lines(eixo,ad[250,1:101],type='l',col="orange")
 lines(eixo,ad[500,1:101],type='l',col="green")
-lines(eixo,ad[750,1:101],type='l',col="green")
-lines(eixo,ad[1000,1:101],type='l',col="green")
+lines(eixo,ad[750,1:101],type='l',col="blue")
+lines(eixo,ad[1000,1:101],type='l',col="black")

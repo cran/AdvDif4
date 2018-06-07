@@ -1,7 +1,7 @@
 # Solve anomalous diffusion using FDM
 # Author: Jader Lugon Junior
-# Date: 04/2018
-# Version: 0.1.18
+# Date: 06/2018
+# Version: 0.2.18
 #
 # AdvDif4(parm,func)
 # parm = alternative to inform parameters data
@@ -22,8 +22,10 @@
 # fbeta = beta diffusion fraction function
 # dbetadp = beta derivative function
 # fn = initial condition function
+# fs = source function
 # fw1,fw2 = left border function for boundary conditions
 # fe1,fe2 = right border function for boundary conditions
+
 #
 #
 #
@@ -54,6 +56,7 @@ AdvDif4<-function(parm=NA,func=NA)
   fbeta=func$fbeta
   dbetadp=func$dbetadp
   fn=func$fn
+  fs=func$fs
   fw1=func$fw1
   fw2=func$fw2
   fe1=func$fe1
@@ -62,9 +65,9 @@ AdvDif4<-function(parm=NA,func=NA)
    {stop('Advection Bi-Flux Difusive Problem functions or variables are wrong or missing.')}
   dx<-l/m
   dt<-tf/n
-  p1<-seq(from=dx, to=l-dx, by=dx)
-  aw<-seq(from=dx, to=l-2*dx, by=dx)
-  aww<-seq(from=dx, to=l-3*dx, by=dx)
+  p1<-seq(from=dx, to=dx, by=dx)
+  aw<-seq(from=dx, to=l-dx, by=dx)
+  aww<-seq(from=dx, to=l-2*dx, by=dx)
   p<-matrix(nrow=n,ncol=m+1)
   ap<-p1
   ae<-aw
@@ -74,7 +77,7 @@ AdvDif4<-function(parm=NA,func=NA)
   # Initial condition definition
   #
   j<-1
-  while(j<=m-1)
+  while(j<=m+1)
   {p1[j]<-fn(dx*j/l)
   j<-j+1}
   #
@@ -137,7 +140,7 @@ AdvDif4<-function(parm=NA,func=NA)
     # Building Matrix "A" and vector "b"
     #
     j<-1
-    while(j<=m-1)
+    while(j<=m)
     {
       auxi=p1[j]
       bet<-fbeta(auxi)
@@ -154,7 +157,7 @@ AdvDif4<-function(parm=NA,func=NA)
       auxi4<-k22*dx^2*dt-12*k44*dt-v*dx^3*dt+al1*dx^3*dt-6*al2*dx*dt
       auxi5<-k22*dx^2*dt-12*k44*dt+v*dx^3*dt-al1*dx^3*dt+6*al2*dx*dt
       ap[j]<-auxi1
-      b[j]<-auxi6*p1[j]
+      b[j]<-auxi6*(p1[j]+dt*fs(dx*j,i*dt))
       if (j==1)
       {if (bc1==1)
       {b[j]<-b[j]+2*dx*dfw1*auxi5-auxi3*cw
@@ -175,7 +178,7 @@ AdvDif4<-function(parm=NA,func=NA)
         {b[j]<-b[j]+auxi5*(dx*dfw1+dx^2*dfw2/2)
         ap[j]<-auxi1+auxi5}
       }
-      if (j==m-1)
+      if (j==m)
       {if (bc2==1)
       {b[j]<-b[j]-2*dx*dfe1*auxi4-auxi2*ce
       ap[j]<-auxi1+auxi4}
@@ -183,16 +186,16 @@ AdvDif4<-function(parm=NA,func=NA)
         {b[j]<-b[j]-2*auxi4*ce-dx^2*auxi4*dfe2-auxi2*ce
         ap[j]<-auxi1-auxi4}
         if (bc2==3)
-        {b[j]<-b[j]-2*auxi4*dx*dfe1+auxi2*(-dx*dfe1+dx^2*dfe2/2)
+        {b[j]<-b[j]-2*auxi4*dx*dfe1+auxi2*(dx^2*dfe2/2-dx*dfe1)
         ap[j]<-auxi1+auxi4+auxi2}
       }
-      if (j==m-2)
+      if (j==m-1)
       {if (bc2==1)
       {b[j]<-b[j]-auxi4*ce}
         if (bc2==2)
         {b[j]<-b[j]-auxi4*ce}
         if (bc2==3)
-        {b[j]<-b[j]-auxi4*dx*dfe1+dx^2*auxi4*dfe2/2
+        {b[j]<-b[j]+auxi4*(dx^2*dfe2/2-dx*dfe1)
         ap[j]<-auxi1+auxi4}
       }
       if (j<m-1)
@@ -208,15 +211,15 @@ AdvDif4<-function(parm=NA,func=NA)
     # saving previous result
     #
     if (bc1==3)
-    {cw<-p1[1]-dx*dfw1-dx^2*dfw2/2}
+     {cw<-p1[1]-dx*dfw1-dx^2*dfw2/2}
     p[i,1]<-cw
-    if (bc2==3)
-    {ce<-p1[m]+dx*dfe1+dx^2*dfe2/2}
-    p[i,m+1]<-ce
     j<-2
     while(j<=m)
     {p[i,j]<-p1[j-1]
     j<-j+1}
+    if (bc2==3)
+     {ce<-p1[m]+dx*dfe1-dx^2*dfe2/2}
+    p[i,m+1]<-ce
     #
     # solving the system "Ax=b"
     #
