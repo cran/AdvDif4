@@ -213,7 +213,7 @@ k4<-1e-5
 # Space and temporal definition
 l<-1
 m<-100
-tf<-100
+tf<-1
 n<-1000
 
 # Left boundary contitions

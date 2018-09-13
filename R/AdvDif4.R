@@ -1,7 +1,7 @@
 # Solve anomalous diffusion using FDM
 # Author: Jader Lugon Junior
-# Date: 06/2018
-# Version: 0.2.18
+# Date: 09/2018
+# Version: 0.3.18
 #
 # AdvDif4(parm,func)
 # parm = alternative to inform parameters data
@@ -65,7 +65,8 @@ AdvDif4<-function(parm=NA,func=NA)
    {stop('Advection Bi-Flux Difusive Problem functions or variables are wrong or missing.')}
   dx<-l/m
   dt<-tf/n
-  p1<-seq(from=dx, to=dx, by=dx)
+  p1<-seq(from=dx, to=l, by=dx)
+  bet<-p1
   aw<-seq(from=dx, to=l-dx, by=dx)
   aww<-seq(from=dx, to=l-2*dx, by=dx)
   p<-matrix(nrow=n,ncol=m+1)
@@ -78,7 +79,7 @@ AdvDif4<-function(parm=NA,func=NA)
   #
   j<-1
   while(j<=m+1)
-  {p1[j]<-fn(dx*j/l)
+  {p1[j]<-fn(dx*j)
   j<-j+1}
   #
   # Defining some useful values
@@ -142,17 +143,16 @@ AdvDif4<-function(parm=NA,func=NA)
     j<-1
     while(j<=m)
     {
-      auxi=p1[j]
-      bet<-fbeta(auxi)
-      k22<-bet*k2
-      k44<-(-bet*(1-bet)*k4)
+      bet[j]<-fbeta(p1[j])
+      k22<-bet[j]*k2
+      k44<-(-bet[j]*(1-bet[j])*k4)
       if (all((j>3),(j<m-3)))
-      {dbedx<-dbetadp(p1[j])*(p1[j-2]-8*p1[j-1]+8*p1[j+1]-p1[j+2])/12/dx}
-      else {dbedx=0}
+       {dbedx<-dbetadp(bet[j])*(p1[j-2]-8*p1[j-1]+8*p1[j+1]-p1[j+2])/12/dx}
+       else {dbedx=0}
       al1<-k2*dbedx
-      al2<-k4*(1-2*bet)*dbedx
+      al2<-k4*(1-2*bet[j])*dbedx
       auxi1<-12*dx^4+30*k22*dx^2*dt-6*12*k44*dt
-      auxi2<-(-16*k22*dx^2*dt+4*12*k44*dt+8*v*dx^3*dt-8*al1*dx^3*dt-6*al2*dx*dt)
+      auxi2<-(-16*k22*dx^2*dt+4*12*k44*dt+8*v*dx^3*dt-8*al1*dx^3*dt+12*al2*dx*dt)
       auxi3<-(-16*k22*dx^2*dt+4*12*k44*dt-8*v*dx^3*dt+8*al1*dx^3*dt-12*al2*dx*dt)
       auxi4<-k22*dx^2*dt-12*k44*dt-v*dx^3*dt+al1*dx^3*dt-6*al2*dx*dt
       auxi5<-k22*dx^2*dt-12*k44*dt+v*dx^3*dt-al1*dx^3*dt+6*al2*dx*dt
@@ -160,41 +160,41 @@ AdvDif4<-function(parm=NA,func=NA)
       b[j]<-auxi6*(p1[j]+dt*fs(dx*j,i*dt))
       if (j==1)
       {if (bc1==1)
-      {b[j]<-b[j]+2*dx*dfw1*auxi5-auxi3*cw
-      ap[j]<-auxi1+auxi5}
-        if (bc1==2)
+        {b[j]<-b[j]+2*dx*dfw1*auxi5-auxi3*cw
+        ap[j]<-auxi1+auxi5}
+      if (bc1==2)
         {b[j]<-b[j]-2*auxi5*cw-dx^2*auxi5*dfw2-auxi3*cw
         ap[j]<-auxi1-auxi5}
-        if (bc1==3)
+      if (bc1==3)
         {b[j]<-b[j]+2*auxi5*dx*dfw1+auxi3*(dx*dfw1+dx^2*dfw2/2)
         ap[j]<-auxi1+auxi5+auxi3}
       }
       if (j==2)
       {if (bc1==1)
-      {b[j]<-b[j]-auxi5*cw}
-        if (bc1==2)
         {b[j]<-b[j]-auxi5*cw}
-        if (bc1==3)
+      if (bc1==2)
+        {b[j]<-b[j]-auxi5*cw}
+      if (bc1==3)
         {b[j]<-b[j]+auxi5*(dx*dfw1+dx^2*dfw2/2)
         ap[j]<-auxi1+auxi5}
       }
       if (j==m)
       {if (bc2==1)
-      {b[j]<-b[j]-2*dx*dfe1*auxi4-auxi2*ce
-      ap[j]<-auxi1+auxi4}
-        if (bc2==2)
+        {b[j]<-b[j]-2*dx*dfe1*auxi4-auxi2*ce
+        ap[j]<-auxi1+auxi4}
+      if (bc2==2)
         {b[j]<-b[j]-2*auxi4*ce-dx^2*auxi4*dfe2-auxi2*ce
         ap[j]<-auxi1-auxi4}
-        if (bc2==3)
+      if (bc2==3)
         {b[j]<-b[j]-2*auxi4*dx*dfe1+auxi2*(dx^2*dfe2/2-dx*dfe1)
         ap[j]<-auxi1+auxi4+auxi2}
       }
       if (j==m-1)
       {if (bc2==1)
-      {b[j]<-b[j]-auxi4*ce}
-        if (bc2==2)
         {b[j]<-b[j]-auxi4*ce}
-        if (bc2==3)
+      if (bc2==2)
+        {b[j]<-b[j]-auxi4*ce}
+      if (bc2==3)
         {b[j]<-b[j]+auxi4*(dx^2*dfe2/2-dx*dfe1)
         ap[j]<-auxi1+auxi4}
       }
@@ -215,8 +215,8 @@ AdvDif4<-function(parm=NA,func=NA)
     p[i,1]<-cw
     j<-2
     while(j<=m)
-    {p[i,j]<-p1[j-1]
-    j<-j+1}
+     {p[i,j]<-p1[j-1]
+     j<-j+1}
     if (bc2==3)
      {ce<-p1[m]+dx*dfe1-dx^2*dfe2/2}
     p[i,m+1]<-ce
