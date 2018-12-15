@@ -1,6 +1,6 @@
-8bef5200f4f88f0b44dd9cc6e717803a *DESCRIPTION
+b8ae2fbd5a54090eea3495daf1a91ec8 *DESCRIPTION
 e516c09e2f9a2c729e9817fcbd92d334 *NAMESPACE
-75fdff5881d7322d3e96924249ea4b49 *R/AdvDif4.R
+911c9b6e85e99d1e19c8c9f89c0a169c *R/AdvDif4.R
 2add3d62206a8a0d91c5e7c28b64cabe *R/pentaSolve.R
 4a73a92e841b851038fa0fbf1dcac039 *inst/doc/ENMC_1_Pdf.R
 a35154eea833a41d2f1030d90ebc1729 *inst/doc/ENMC_2_Pdf.R
@@ -14,7 +14,7 @@ ee0cfe92ee68b0cff2efc9ab5512156a *inst/doc/MAI_1_Pdf.R
 af8125eba8198f2f29a176bfb94fcf24 *inst/doc/MAI_4_Pdf.R
 9710a2957aaee55b91356bc8e9a589eb *inst/doc/MAI_5_Pdf.R
 d354f241f65ec0745b7a9762f9f81c56 *inst/doc/MAI_6_Pdf.R
-d08dff5c89a366e87da704785dae417a *inst/doc/News.md
+e6e61f4be8e71071ffa0f1de730d793b *inst/doc/News.md
 8273ab3e7ae22af857327193f154c19e *inst/doc/parse10.R
 aa33af4653f1d2f9632a7bdaa3afc514 *inst/doc/parse11.R
 888820f60adaa2d1b79d98f757ebce55 *inst/doc/parse20.R

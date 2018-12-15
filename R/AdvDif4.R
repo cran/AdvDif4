@@ -1,7 +1,7 @@
 # Solve anomalous diffusion using FDM
 # Author: Jader Lugon Junior
-# Date: 09/2018
-# Version: 0.3.18
+# Date: 12/2018
+# Version: 0.4.18
 #
 # AdvDif4(parm,func)
 # parm = alternative to inform parameters data
@@ -65,10 +65,10 @@ AdvDif4<-function(parm=NA,func=NA)
    {stop('Advection Bi-Flux Difusive Problem functions or variables are wrong or missing.')}
   dx<-l/m
   dt<-tf/n
-  p1<-seq(from=dx, to=l, by=dx)
+  p1<-seq(from=dx, to=l-dx, by=dx)
   bet<-p1
-  aw<-seq(from=dx, to=l-dx, by=dx)
-  aww<-seq(from=dx, to=l-2*dx, by=dx)
+  aw<-seq(from=dx, to=l-2*dx, by=dx)
+  aww<-seq(from=dx, to=l-3*dx, by=dx)
   p<-matrix(nrow=n,ncol=m+1)
   ap<-p1
   ae<-aw
@@ -78,7 +78,7 @@ AdvDif4<-function(parm=NA,func=NA)
   # Initial condition definition
   #
   j<-1
-  while(j<=m+1)
+  while(j<=m)
   {p1[j]<-fn(dx*j)
   j<-j+1}
   #
@@ -141,7 +141,7 @@ AdvDif4<-function(parm=NA,func=NA)
     # Building Matrix "A" and vector "b"
     #
     j<-1
-    while(j<=m)
+    while(j<=m-1)
     {
       bet[j]<-fbeta(p1[j])
       k22<-bet[j]*k2
@@ -178,7 +178,7 @@ AdvDif4<-function(parm=NA,func=NA)
         {b[j]<-b[j]+auxi5*(dx*dfw1+dx^2*dfw2/2)
         ap[j]<-auxi1+auxi5}
       }
-      if (j==m)
+      if (j==m-1)
       {if (bc2==1)
         {b[j]<-b[j]-2*dx*dfe1*auxi4-auxi2*ce
         ap[j]<-auxi1+auxi4}
@@ -189,7 +189,7 @@ AdvDif4<-function(parm=NA,func=NA)
         {b[j]<-b[j]-2*auxi4*dx*dfe1+auxi2*(dx^2*dfe2/2-dx*dfe1)
         ap[j]<-auxi1+auxi4+auxi2}
       }
-      if (j==m-1)
+      if (j==m-2)
       {if (bc2==1)
         {b[j]<-b[j]-auxi4*ce}
       if (bc2==2)
@@ -198,9 +198,9 @@ AdvDif4<-function(parm=NA,func=NA)
         {b[j]<-b[j]+auxi4*(dx^2*dfe2/2-dx*dfe1)
         ap[j]<-auxi1+auxi4}
       }
-      if (j<m-1)
+      if (j<m-2)
       {aee[j]<-auxi4}
-      if (j<m)
+      if (j<m-1)
       {ae[j]<-auxi2}
       if (j>1)
       {aw[j-1]<-auxi3}

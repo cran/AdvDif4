@@ -12,3 +12,5 @@ AdvDif4 0.3.18
 + Solving a bug to solve cases with L>1
 + Including in "doc" folder some files to run cases from papers presented in Congress: ENMC 2018 (http://nbcgib.uesc.br/enmc2018/artigos.php) and MAI 2018 (http://www.cciacuba.com/es/general18).
 
+AdvDif4 0.4.18
++ Solving a bug related to the right boudary condition.
